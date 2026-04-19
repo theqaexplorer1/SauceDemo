@@ -195,9 +195,6 @@ public class LocatorTest {
             Assert.assertNotNull(cssAttrContainsSubstring);
             System.out.println("CSS [attr*=value]: кнопка, data-test содержит подстроку 'add-to-cart'");
 
-            //Переходим в корзину
-            driver.findElement(By.xpath("//div[@data-test='shopping-cart-link']")).click();
-
         } finally {
             System.out.println("Тест завершён");
             driver.quit();
