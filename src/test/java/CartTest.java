@@ -5,6 +5,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ public class CartTest {
         options.addArguments("--disable-infobars");
         WebDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        SoftAssert softAssert = new SoftAssert();
 
         try {
             driver.get(BASE_URL);
@@ -61,15 +63,13 @@ public class CartTest {
             String itemPrice = itemPriceElement.getText();
 
             // проверяем название и цену
-            Assert.assertEquals(itemName, "Sauce Labs Backpack", "Имя товара не совпадает");
-            Assert.assertEquals(itemPrice, "$29.99", "Цена товара не совпадает");
+            softAssert.assertEquals(itemName, "Sauce Labs Backpack", "Имя товара не совпадает");
+            softAssert.assertEquals(itemPrice, "$29.99", "Цена товара не совпадает");
 
             System.out.printf("Тест пройден: название товара:  %s, цена: %s %n", itemName, itemPrice);
-
         } finally {
             System.out.println("Все тесты завершены");
             driver.quit();
         }
-
     }
 }
