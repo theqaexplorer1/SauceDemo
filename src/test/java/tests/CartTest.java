@@ -74,6 +74,6 @@ public class CartTest extends BaseTest {
         softAssert.assertEquals(cartPage.getFirstItemPrice(), EXPECTED_ITEM_PRICE);
         // Переходим к оформлению
         cartPage.clickCheckout();
-        Assert.assertTrue(driver.getCurrentUrl().contains("/checkout-step-one.html"));
+        softAssert.assertTrue(driver.getCurrentUrl().contains("/checkout-step-one.html"));
     }
 }
