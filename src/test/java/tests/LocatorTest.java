@@ -1,3 +1,4 @@
+package tests;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -5,7 +6,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -199,7 +199,5 @@ public class LocatorTest {
             System.out.println("Тест завершён");
             driver.quit();
         }
-
-
     }
 }
