@@ -14,10 +14,10 @@ import java.util.HashMap;
 
 public class BaseTest {
 
-    WebDriver driver;
-    LoginPage loginPage;
-    ProductsPage productsPage;
-    CartPage cartPage;
+    protected WebDriver driver;
+    protected LoginPage loginPage;
+    protected ProductsPage productsPage;
+    protected CartPage cartPage;
     protected SoftAssert softAssert = new SoftAssert();
     // Основной пользователь для позитивных тестов
     protected static final String USERNAME = "standard_user";
