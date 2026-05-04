@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<!--
+  SauceDemo Test Suite
+  - parallel="methods": параллельный запуск методов внутри класса
+  - thread-count="2": количество потоков
+  - groups: фильтрация тестов по группам
+  - 1.44 xunit video
+-->
+<suite name="SauceDemo Test Suite">
+    <!-- SMOKE TESTS -->
+    <!-- Быстрая проверка критичного функционала -->
+    <test name="Smoke Tests">
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.ProductsPageTest"/>
+            <class name="tests.CartTest"/>
+        </classes>
+    </test>
+    <!-- REGRESSION TESTS -->
+    <!-- Полная проверка всего функционала -->
+    <test name="Regression Tests">
+        <groups>
+            <run>
+                <include name="regression"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.ProductsPageTest"/>
+            <class name="tests.CartTest"/>
+        </classes>
+    </test>
+    <!-- LOGIN TESTS ONLY -->
+    <test name="Login Tests">
+        <groups>
+            <run>
+                <include name="login"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.LoginTest"/>
+        </classes>
+    </test>
+    <!-- CART TESTS ONLY -->
+    <test name="Cart Tests">
+        <groups>
+            <run>
+                <include name="cart"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="tests.CartTest"/>
+            <class name="tests.ProductsPageTest"/>
+        </classes>
+    </test>
+</suite>

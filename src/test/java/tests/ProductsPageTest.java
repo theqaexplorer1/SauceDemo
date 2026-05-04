@@ -4,22 +4,25 @@ import org.testng.annotations.Test;
 
 public class ProductsPageTest extends BaseTest{
 
-    //Проверка заголовка страницы "Products"
-    @Test
+    @Test(groups = {"smoke", "regression", "products"},
+            description = "Проверка заголовка страницы 'Products'",
+            testName = "Проверка заголовка страницы 'Products'")
     public void testProductsPageTitle() {
         loginAsStandardUser();
         Assert.assertEquals(productsPage.getTitle(), "Products", "Должен быть заголовок Products");
     }
 
-    //Проверка отображения списка товаров (должно быть 6)
-    @Test
+    @Test(groups = {"regression", "products"},
+            description = "Проверка отображения списка товаров (должно быть 6)",
+            testName = "Проверка отображения списка товаров (должно быть 6)")
     public void testProductsListDisplayed() {
         loginAsStandardUser();
         Assert.assertEquals(productsPage.getItemsCount(), 6, "На странице должно быть 6 товаров");
     }
 
-    //Добавление товара в корзину (кнопка "Add to cart")
-    @Test
+    @Test(groups = {"regression", "products", "cart"},
+            description = "Добавление товара в корзину (кнопка \"Add to cart\")",
+            testName = "Добавление товара в корзину (кнопка \"Add to cart\")")
     public void testAddToCart() {
         loginAsStandardUser();
         softAssert.assertTrue(productsPage.isAddButtonVisible(0), "Должна быть кнопка 'Add to cart'");
@@ -27,8 +30,9 @@ public class ProductsPageTest extends BaseTest{
         softAssert.assertTrue(productsPage.isRemoveButtonVisible(0), "После добавления должна быть кнопка 'Remove'");
     }
 
-    //Удаление товара из корзины (кнопка "Remove")
-    @Test
+    @Test(groups = {"regression", "products", "cart"},
+            description = "Удаление товара из корзины (кнопка \"Remove\")",
+            testName = "Удаление товара из корзины (кнопка \"Remove\")")
     public void testRemoveFromCart() {
         loginAsStandardUser();
         productsPage.addToCart(0);
@@ -37,8 +41,9 @@ public class ProductsPageTest extends BaseTest{
         softAssert.assertTrue(productsPage.isAddButtonVisible(0), "После удаления должна вернуться кнопка 'Add to cart'");
     }
 
-    //Проверка счётчика товаров в иконке корзины
-    @Test
+    @Test(groups = {"regression", "products", "cart"},
+            description = "Проверка счётчика товаров в иконке корзины",
+            testName = "Проверка счётчика товаров в иконке корзины")
     public void testCartBadgeCount() {
         loginAsStandardUser();
         productsPage.addToCart(0);

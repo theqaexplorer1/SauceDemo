@@ -18,7 +18,7 @@ public class LocatorTest {
     public static final String LOGIN_ERROR_USER = "error_user";
     public static final String PASSWORD = "secret_sauce";
 
-    @Test
+    @Test(description = "Проверка локаторов", testName = "Проверка локаторов")
     public void checkLocator() throws InterruptedException{
         ChromeOptions options = new ChromeOptions();
         HashMap<String, Object> chromePrefs = new HashMap<>();
