@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-
 <!--
   SauceDemo Test Suite
   - parallel="methods": параллельный запуск методов внутри класса
@@ -9,6 +8,10 @@
   - 1.44 xunit video
 -->
 <suite name="SauceDemo Test Suite">
+    <listeners>
+        <listener class-name="utils.TestListener"/>
+        <listener class-name="utils.AnnotationTransformer"/>
+    </listeners>
     <!-- SMOKE TESTS -->
     <!-- Быстрая проверка критичного функционала -->
     <test name="Smoke Tests">
