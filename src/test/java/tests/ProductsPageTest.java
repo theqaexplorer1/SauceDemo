@@ -1,12 +1,24 @@
 package tests;
+import io.qameta.allure.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@Epic("E-commerce")
+@Feature("Product Catalog")
+@Owner("ivan.ivanov")
+@Link(name = "SauceDemo", url = "https://saucedemo.com")
 public class ProductsPageTest extends BaseTest{
 
     @Test(groups = {"smoke", "regression", "products"},
             description = "Проверка заголовка страницы 'Products'",
             testName = "Проверка заголовка страницы 'Products'")
+    @Description("Проверка: после успешного логина отображается заголовок 'Products'")
+    @TmsLink("QASE-301")
+    @Issue("BUG-301")
+    @Story("View products page header")
+    @Severity(SeverityLevel.CRITICAL)
+    @Owner("ivan.ivanov")
+    @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testProductsPageTitle() {
         loginAsStandardUser();
         Assert.assertEquals(productsPage.getTitle(), "Products", "Должен быть заголовок Products");
@@ -15,6 +27,13 @@ public class ProductsPageTest extends BaseTest{
     @Test(groups = {"regression", "products"},
             description = "Проверка отображения списка товаров (должно быть 6)",
             testName = "Проверка отображения списка товаров (должно быть 6)")
+    @Description("Проверка: на странице товаров отображается ровно 6 карточек товаров")
+    @TmsLink("QASE-302")
+    @Issue("BUG-302")
+    @Story("View product list count")
+    @Severity(SeverityLevel.NORMAL)
+    @Owner("ivan.ivanov")
+    @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testProductsListDisplayed() {
         loginAsStandardUser();
         Assert.assertEquals(productsPage.getItemsCount(), 6, "На странице должно быть 6 товаров");
@@ -23,6 +42,13 @@ public class ProductsPageTest extends BaseTest{
     @Test(groups = {"regression", "products", "cart"},
             description = "Добавление товара в корзину (кнопка \"Add to cart\")",
             testName = "Добавление товара в корзину (кнопка \"Add to cart\")")
+    @Description("Проверка: при нажатии 'Add to cart' кнопка меняется на 'Remove'")
+    @TmsLink("QASE-303")
+    @Issue("BUG-303")
+    @Story("Add item to cart from product list")
+    @Severity(SeverityLevel.CRITICAL)
+    @Owner("ivan.ivanov")
+    @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testAddToCart() {
         loginAsStandardUser();
         softAssert.assertTrue(productsPage.isAddButtonVisible(0), "Должна быть кнопка 'Add to cart'");
@@ -33,6 +59,13 @@ public class ProductsPageTest extends BaseTest{
     @Test(groups = {"regression", "products", "cart"},
             description = "Удаление товара из корзины (кнопка \"Remove\")",
             testName = "Удаление товара из корзины (кнопка \"Remove\")")
+    @Description("Проверка: при нажатии 'Remove' кнопка возвращается к 'Add to cart'")
+    @TmsLink("QASE-304")
+    @Issue("BUG-304")
+    @Story("Remove item from product list")
+    @Severity(SeverityLevel.NORMAL)
+    @Owner("ivan.ivanov")
+    @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testRemoveFromCart() {
         loginAsStandardUser();
         productsPage.addToCart(0);
@@ -44,6 +77,13 @@ public class ProductsPageTest extends BaseTest{
     @Test(groups = {"regression", "products", "cart"},
             description = "Проверка счётчика товаров в иконке корзины",
             testName = "Проверка счётчика товаров в иконке корзины")
+    @Description("Проверка: бейдж корзины обновляется при добавлении товаров")
+    @TmsLink("QASE-305")
+    @Issue("BUG-305")
+    @Story("Cart badge counter update")
+    @Severity(SeverityLevel.NORMAL)
+    @Owner("ivan.ivanov")
+    @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testCartBadgeCount() {
         loginAsStandardUser();
         productsPage.addToCart(0);

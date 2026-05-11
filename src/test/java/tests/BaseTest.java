@@ -1,10 +1,13 @@
 package tests;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.testng.AllureTestNg;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.testng.ITestContext;
 import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
 import pages.CartPage;
@@ -15,7 +18,7 @@ import utils.TestListener;
 import java.time.Duration;
 import java.util.HashMap;
 
-@Listeners(TestListener.class)
+@Listeners({AllureTestNg.class, TestListener.class})
 public class BaseTest {
 
     protected WebDriver driver;
@@ -34,7 +37,8 @@ public class BaseTest {
 
     @Parameters({"browser"})
     @BeforeMethod (alwaysRun = true)
-    public void setUp(@Optional("chrome") String browser) {
+    @Description("Настройка браузера")
+    public void setUp(@Optional("chrome") String browser, ITestContext iTestContext) {
         // Инициализация драйвера в зависимости от браузера
         if (browser.equalsIgnoreCase("firefox")) {
             FirefoxOptions firefoxOptions = new FirefoxOptions();
@@ -60,9 +64,12 @@ public class BaseTest {
         loginPage = new LoginPage(driver);
         productsPage = new ProductsPage(driver);
         cartPage = new CartPage(driver);
+
+        iTestContext.setAttribute("driver", driver);
     }
 
     @AfterMethod (alwaysRun = true)
+    @Description("Закрытие браузера")
     public void tearDown() {
         driver.quit();
         softAssert.assertAll();

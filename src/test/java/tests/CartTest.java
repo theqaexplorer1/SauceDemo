@@ -1,8 +1,12 @@
 package tests;
+import io.qameta.allure.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-
+@Epic("E-commerce")
+@Feature("Shopping Cart")
+@Owner("ivan.ivanov")
+@Link(name = "SauceDemo", url = "https://saucedemo.com")
 public class CartTest extends BaseTest {
 
     private static final String EXPECTED_ITEM_NAME = "Sauce Labs Backpack";
@@ -11,6 +15,13 @@ public class CartTest extends BaseTest {
     @Test(groups = {"smoke", "regression", "cart"},
             description = "Переход в корзину по иконке и проверка названия товара",
             testName = "Переход в корзину по иконке и проверка названия товара")
+    @Description("Проверка: после добавления товара в корзину, его название отображается корректно")
+    @TmsLink("QASE-201")
+    @Issue("BUG-201")
+    @Story("View cart item name")
+    @Severity(SeverityLevel.CRITICAL)
+    @Owner("ivan.ivanov")
+    @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testCartPageNavigationAndItemName() {
         // Предусловие: товар добавлен в корзину (через ProductsPage)
         loginAsStandardUser();
@@ -25,6 +36,13 @@ public class CartTest extends BaseTest {
     @Test(groups = {"regression", "cart"},
             description = "Проверка цены товара в корзине",
             testName = "Проверка цены товара в корзине")
+    @Description("Проверка: цена товара в корзине соответствует цене на странице товаров")
+    @TmsLink("QASE-202")
+    @Issue("BUG-202")
+    @Story("View cart item price")
+    @Severity(SeverityLevel.CRITICAL)
+    @Owner("ivan.ivanov")
+    @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testCartItemPrice() {
         loginAsStandardUser();
         productsPage.addToCart(0);
@@ -36,6 +54,13 @@ public class CartTest extends BaseTest {
     @Test(groups = {"regression", "cart"},
             description = "Удаление товара из корзины",
             testName = "Удаление товара из корзины")
+    @Description("Проверка: после удаления товара корзина становится пустой, отображается сообщение")
+    @TmsLink("QASE-203")
+    @Issue("BUG-203")
+    @Story("Remove item from cart")
+    @Severity(SeverityLevel.NORMAL)
+    @Owner("ivan.ivanov")
+    @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testRemoveItemFromCart() {
         loginAsStandardUser();
         productsPage.addToCart(0);
@@ -57,6 +82,13 @@ public class CartTest extends BaseTest {
     @Test(groups = {"regression", "cart", "checkout"},
             description = "Проверка перехода к оформлению заказа",
             testName = "Проверка перехода к оформлению заказа")
+    @Description("Проверка: при нажатии Checkout открывается страница оформления заказа")
+    @TmsLink("QASE-204")
+    @Issue("BUG-204")
+    @Story("Proceed to checkout")
+    @Severity(SeverityLevel.CRITICAL)
+    @Owner("ivan.ivanov")
+    @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testGoToCheckout() {
         loginAsStandardUser();
         productsPage.addToCart(0);
@@ -70,6 +102,13 @@ public class CartTest extends BaseTest {
     @Test(groups = {"regression", "cart", "e2e"},
             description = "Весь пользовательский путь в корзине",
             testName = "Весь пользовательский путь в корзине")
+    @Description("E2E-сценарий: добавление товара -> просмотр корзины -> переход к оформлению")
+    @TmsLink("QASE-205")
+    @Issue("BUG-205")
+    @Story("Full cart flow")
+    @Severity(SeverityLevel.BLOCKER)
+    @Owner("ivan.ivanov")
+    @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testFullCartFlow() {
         loginAsStandardUser();
         // Добавляем товар
