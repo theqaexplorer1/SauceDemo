@@ -2,7 +2,14 @@ package tests;
 import io.qameta.allure.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import pages.CartPage;
+import pages.LoginPage;
 
+/**
+ * Тесты для страницы корзины.
+ * Демонстрирует полную цепочку:
+ *    LoginPage -> login() -> ProductsPage -> addToCart() -> goToCart() -> CartPage
+ */
 @Epic("E-commerce")
 @Feature("Shopping Cart")
 @Owner("ivan.ivanov")
@@ -23,11 +30,17 @@ public class CartTest extends BaseTest {
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testCartPageNavigationAndItemName() {
-        // Предусловие: товар добавлен в корзину (через ProductsPage)
-        loginAsStandardUser();
-        productsPage.addToCart(0);  // индекс 0 = "Sauce Labs Backpack"
-        // Переход в корзину по иконке
-        productsPage.goToCart();
+        // Цепочка вызовов:
+        // 1. new LoginPage(driver) -> создаём
+        // 2. .open() - открываем и ждём загрузки -> LoginPage (this)
+        // 3. .login(...) - логинимся -> ProductsPage
+        // 4. .addToCart(0) - добавляем товар -> ProductsPage (this)
+        // 5. .goToCart() - переходим в корзину -> CartPage
+        CartPage cartPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD)
+                .addToCart(0)
+                .goToCart();
         // Проверка названия товара в корзине
         Assert.assertEquals(cartPage.getFirstItemName(), EXPECTED_ITEM_NAME,
                 "Название товара в корзине не совпадает");
@@ -44,9 +57,11 @@ public class CartTest extends BaseTest {
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testCartItemPrice() {
-        loginAsStandardUser();
-        productsPage.addToCart(0);
-        productsPage.goToCart();
+        CartPage cartPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD)
+                .addToCart(0)
+                .goToCart();
         Assert.assertEquals(cartPage.getFirstItemPrice(), EXPECTED_ITEM_PRICE,
                 "Цена товара в корзине не совпадает");
     }
@@ -62,9 +77,11 @@ public class CartTest extends BaseTest {
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testRemoveItemFromCart() {
-        loginAsStandardUser();
-        productsPage.addToCart(0);
-        productsPage.goToCart();
+        CartPage cartPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD)
+                .addToCart(0)
+                .goToCart();
         // Проверяем, что товар есть
         softAssert.assertTrue(cartPage.isItemInCart(EXPECTED_ITEM_NAME),
                 "Товар должен быть в корзине перед удалением");
@@ -90,11 +107,12 @@ public class CartTest extends BaseTest {
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testGoToCheckout() {
-        loginAsStandardUser();
-        productsPage.addToCart(0);
-        productsPage.goToCart();
-        // Переходим к оформлению и проверяем что открылась страница checkout-step-one.html
-        cartPage.clickCheckout();
+        new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD)
+                .addToCart(0)
+                .goToCart()
+                .clickCheckout();  // Возвращает void, цепочка завершена
         Assert.assertTrue(driver.getCurrentUrl().contains("/checkout-step-one.html"),
                 "Должна открыться страница оформления заказа");
     }
@@ -110,11 +128,11 @@ public class CartTest extends BaseTest {
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testFullCartFlow() {
-        loginAsStandardUser();
-        // Добавляем товар
-        productsPage.addToCart(0);
-        // Переходим в корзину
-        productsPage.goToCart();
+        CartPage cartPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD)
+                .addToCart(0)
+                .goToCart();
         // Проверяем имя и цену
         softAssert.assertEquals(cartPage.getFirstItemName(), EXPECTED_ITEM_NAME);
         softAssert.assertEquals(cartPage.getFirstItemPrice(), EXPECTED_ITEM_PRICE);

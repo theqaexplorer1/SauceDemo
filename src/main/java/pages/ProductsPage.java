@@ -22,9 +22,21 @@ public class ProductsPage extends BasePage{
         super(driver);
     }
 
+     // Проверка: мы на странице товаров, если видим заголовок "Products"
+    @Override
+    public boolean isPageLoaded() {
+        try {
+            return driver.findElement(TITLE).isDisplayed()
+                    && driver.getCurrentUrl().contains("/inventory.html");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Step("Открыть страницу товаров: {0}")
-    public void open() {
-        driver.get(BASE_URL + "/inventory.html");
+    public ProductsPage open() {
+        openPage(BASE_URL + "/inventory.html");
+        return this;  // Chain: остаёмся на ProductsPage
     }
 
     @Step("Получить заголовок страницы")
@@ -39,25 +51,29 @@ public class ProductsPage extends BasePage{
 
     //Добавление товара в корзину (по индексу 0-5)
     @Step("Добавить товар в корзину по индексу: {0}")
-    public void addToCart(int itemIndex) {
+    public ProductsPage addToCart(int itemIndex) {
         List<WebElement> items = driver.findElements(INVENTORY_ITEM);
         items.get(itemIndex).findElement(ADD_TO_CART_BUTTON).click();
+        return this;  // Chain: остаёмся на ProductsPage
     }
 
     @Step("Добавить товар в корзину по имени: {0}")
-    public void addToCartByName(String product_name){
+    public ProductsPage addToCartByName(String product_name){
         driver.findElement(By.xpath(String.format(ADD_TO_CART_PATTERN, product_name))).click();
+        return this;  // Chain: остаёмся на ProductsPage
     }
 
     @Step("Удалить товар из корзины по индексу: {0}")
-    public void removeFromCart(int itemIndex) {
+    public ProductsPage removeFromCart(int itemIndex) {
         List<WebElement> items = driver.findElements(INVENTORY_ITEM);
         items.get(itemIndex).findElement(REMOVE_BUTTON).click();
+        return this;  // Chain: остаёмся на ProductsPage
     }
 
     @Step("Удалить товар из корзины по имени: {0}")
-    public void removeFromCartByName(String product_name){
+    public ProductsPage removeFromCartByName(String product_name){
         driver.findElement(By.xpath(String.format(REMOVE_FROM_CART_PATTERN, product_name))).click();
+        return this;  // Chain: остаёмся на ProductsPage
     }
 
     // Проверка счётчика товаров в иконке корзины
@@ -68,8 +84,9 @@ public class ProductsPage extends BasePage{
     }
 
     @Step("Перейти в корзину по иконке")
-    public void goToCart() {
+    public CartPage goToCart() {
         driver.findElement(CART_ICON).click();
+        return new CartPage(driver); //Chain: переход на другую страницу
     }
 
     // Есть ли кнопка "Remove" у товара (значит, в корзине)

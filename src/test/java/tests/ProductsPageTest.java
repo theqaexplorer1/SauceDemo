@@ -2,7 +2,13 @@ package tests;
 import io.qameta.allure.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import pages.LoginPage;
+import pages.ProductsPage;
 
+/**
+ * Тесты для страницы товаров (инвентаря).
+ * Все тесты используют цепочку: LoginPage -> login() -> ProductsPage
+ */
 @Epic("E-commerce")
 @Feature("Product Catalog")
 @Owner("ivan.ivanov")
@@ -20,7 +26,10 @@ public class ProductsPageTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testProductsPageTitle() {
-        loginAsStandardUser();
+        // Получаем ProductsPage через цепочку вызовов
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
         Assert.assertEquals(productsPage.getTitle(), "Products", "Должен быть заголовок Products");
     }
 
@@ -35,7 +44,9 @@ public class ProductsPageTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testProductsListDisplayed() {
-        loginAsStandardUser();
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
         Assert.assertEquals(productsPage.getItemsCount(), 6, "На странице должно быть 6 товаров");
     }
 
@@ -50,10 +61,14 @@ public class ProductsPageTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testAddToCart() {
-        loginAsStandardUser();
-        softAssert.assertTrue(productsPage.isAddButtonVisible(0), "Должна быть кнопка 'Add to cart'");
-        productsPage.addToCart(0);
-        softAssert.assertTrue(productsPage.isRemoveButtonVisible(0), "После добавления должна быть кнопка 'Remove'");
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
+        softAssert.assertTrue(productsPage.isAddButtonVisible(0),
+                "Должна быть кнопка 'Add to cart'");
+        productsPage.addToCart(0); // addToCart() возвращает this (ProductsPage) -> можно продолжать цепочку
+        softAssert.assertTrue(productsPage.isRemoveButtonVisible(0),
+                "После добавления должна быть кнопка 'Remove'");
     }
 
     @Test(groups = {"regression", "products", "cart"},
@@ -67,10 +82,12 @@ public class ProductsPageTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testRemoveFromCart() {
-        loginAsStandardUser();
-        productsPage.addToCart(0);
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
+        productsPage.addToCart(0); //сначала добавляем товар
         softAssert.assertTrue(productsPage.isRemoveButtonVisible(0));
-        productsPage.removeFromCart(0);
+        productsPage.removeFromCart(0); // Удаляем товар (метод возвращает this)
         softAssert.assertTrue(productsPage.isAddButtonVisible(0), "После удаления должна вернуться кнопка 'Add to cart'");
     }
 
@@ -85,7 +102,9 @@ public class ProductsPageTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testCartBadgeCount() {
-        loginAsStandardUser();
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
         productsPage.addToCart(0);
         softAssert.assertEquals(productsPage.getCartBadgeCount(), "1", "Счётчик корзины должен быть 1");
         productsPage.addToCart(1);

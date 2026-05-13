@@ -19,9 +19,20 @@ public class CartPage extends BasePage{
         super(driver);
     }
 
+    // Проверка: мы в корзине, если URL содержит /cart.html
+    @Override
+    public boolean isPageLoaded() {
+        try {
+            return driver.getCurrentUrl().contains("/cart.html");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Step("Открыть страницу корзины: {0}")
-    public void open() {
-        driver.get(BASE_URL + "/cart.html");
+    public CartPage open() {
+        openPage(BASE_URL + "/cart.html");
+        return this;  // 🔗 Chain: остаёмся на CartPage
     }
 
     // Переход в корзину по иконке (можно вызвать из ProductsPage, но оставлено для полноты)
@@ -41,13 +52,16 @@ public class CartPage extends BasePage{
     }
 
     @Step("Удалить первый товар из корзины")
-    public void removeFirstItem() {
+    public CartPage removeFirstItem() {
         driver.findElement(REMOVE_BUTTON).click();
+        return this;  // Chain: остаёмся на CartPage
     }
 
     @Step("Перейти к оформлению заказа")
     public void clickCheckout() {
         driver.findElement(CHECKOUT_BUTTON).click();
+        // Возвращаем void, так как дальше идёт проверка URL в тесте
+        // CheckoutPage не реализован на данный момент
     }
 
     @Step("Проверить наличие товара '{0}' в корзине")

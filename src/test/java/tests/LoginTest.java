@@ -3,8 +3,17 @@ import io.qameta.allure.*;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import pages.LoginPage;
+import pages.ProductsPage;
+
 import static org.testng.AssertJUnit.assertEquals;
 
+/**
+ * Тесты для страницы логина.
+ * Все тесты используют паттерн Chain of Invocations:
+ * new LoginPage(driver).open().login(...)
+ * Каждая страница проверяет свою загрузку через isPageLoaded()
+ */
 public class LoginTest extends BaseTest{
 
     @Test(groups = {"smoke", "regression", "login"},
@@ -20,8 +29,14 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void checkLoginWithPositiveCreds() {
-        loginPage.open();
-        loginPage.login(USERNAME, PASSWORD);
+        // Chain of Invocations:
+        // 1. new LoginPage(driver) - создаём объект страницы
+        // 2. .open() - открываем URL и ждём isPageLoaded() -> возвращает LoginPage (this)
+        // 3. .login(...) - вводим креды, кликаем Login -> возвращает ProductsPage
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
+
         assertEquals(productsPage.getTitle(), "Products");
     }
 
@@ -38,8 +53,10 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void checkLoginWithEmptyUser() {
-        loginPage.open();
-        loginPage.login("", PASSWORD);
+        // Логин не удался → метод login() не вернёт ProductsPage
+        // Поэтому работаем с тем же объектом LoginPage
+        LoginPage loginPage = new LoginPage(driver).open();
+        loginPage.login("", PASSWORD);  // Пустой логин
         assertEquals(loginPage.getErrorMessage(), "Epic sadface: Username is required");
     }
 
@@ -56,8 +73,8 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void checkLoginWithEmptyPassword() {
-        loginPage.open();
-        loginPage.login(USERNAME, "");
+        LoginPage loginPage = new LoginPage(driver).open();
+        loginPage.login(USERNAME, "");  // Пустой пароль
         assertEquals(loginPage.getErrorMessage(), "Epic sadface: Password is required");
     }
 
@@ -74,8 +91,8 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void checkLoginWithNegativeUser() {
-        loginPage.open();
-        loginPage.login("ABC", PASSWORD);
+        LoginPage loginPage = new LoginPage(driver).open();
+        loginPage.login("ABC", PASSWORD);  // Неверный логин
         assertEquals(loginPage.getErrorMessage(), "Epic sadface: Username and password do not match " +
                 "any user in this service");
     }
@@ -93,12 +110,16 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void checkLoginWithNegativePassword() {
-        loginPage.open();
-        loginPage.login(USERNAME, "ABC");
+        LoginPage loginPage = new LoginPage(driver).open();
+        loginPage.login(USERNAME, "ABC");  // Неверный пароль
         assertEquals(loginPage.getErrorMessage(), "Epic sadface: Username and password do not match " +
                 "any user in this service");
     }
 
+    /**
+     * DataProvider: набор данных для параметризованных тестов
+     * Возвращает массив: [логин, пароль, ожидаемое сообщение об ошибке]
+     */
     @DataProvider(name = "Тестовые данные для негативного логина")
     public Object[][] loginData() {
         return new Object[][] {
@@ -120,7 +141,7 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void negativeLogin(String user, String password, String errorMessage) {
-        loginPage.open();
+        LoginPage loginPage = new LoginPage(driver).open();
         loginPage.login(user, password);
         assertEquals(loginPage.getErrorMessage(), errorMessage);
     }
