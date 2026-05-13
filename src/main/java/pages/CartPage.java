@@ -1,8 +1,7 @@
 package pages;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import java.util.List;
 
 public class CartPage extends BasePage{
 
@@ -20,46 +19,50 @@ public class CartPage extends BasePage{
         super(driver);
     }
 
+    @Step("Открыть страницу корзины: {0}")
     public void open() {
         driver.get(BASE_URL + "/cart.html");
     }
 
     // Переход в корзину по иконке (можно вызвать из ProductsPage, но оставлено для полноты)
+    @Step("Переход в корзину по иконке")
     public void goToCartFromProducts() {
         driver.findElement(By.id("shopping_cart_container")).click();
     }
 
-    // Проверка названия товара в корзине (первый товар)
+    @Step("Получить название первого товара в корзине")
     public String getFirstItemName() {
         return driver.findElement(ITEM_NAME).getText();
     }
 
-    // Проверка цены товара в корзине (первый товар)
+    @Step("Получить цену первого товара в корзине")
     public String getFirstItemPrice() {
         return driver.findElement(ITEM_PRICE).getText();
     }
 
-    // Удаление товара из корзины (первый товар)
+    @Step("Удалить первый товар из корзины")
     public void removeFirstItem() {
         driver.findElement(REMOVE_BUTTON).click();
     }
 
-    // Переход к оформлению заказа
+    @Step("Перейти к оформлению заказа")
     public void clickCheckout() {
         driver.findElement(CHECKOUT_BUTTON).click();
     }
 
-    // Проверить, что товар есть в корзине
+    @Step("Проверить наличие товара '{0}' в корзине")
     public boolean isItemInCart(String itemName) {
         return getFirstItemName().equals(itemName);
     }
 
     // Корзина пуста, если нет элементов .cart_item
+    @Step("Проверить, что корзина пуста")
     public boolean isCartEmpty() {
         return driver.findElements(CART_ITEM).isEmpty();
     }
 
     // Удалённые элементы в корзине в DOM имеют div.removed_cart_item
+    @Step("Проверить отображение сообщения о пустой корзине в HTML страницы")
     public boolean isEmptyCartItemInDom() {
         return driver.findElements(EMPTY_CART_ITEM).size() > 0;
     }

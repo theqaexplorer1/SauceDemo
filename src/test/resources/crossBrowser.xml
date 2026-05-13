@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<!--
+  Cross-Browser Test Suite
+  - Запускает одни и те же тесты на разных браузерах
+  - параллельно: parallel="tests" + thread-count
+-->
+<suite name="SauceDemo Cross-Browser Suite" parallel="tests" thread-count="2">
+    <!-- CHROME  -->
+    <test name="Login Tests - Chrome">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="tests.LoginTest">
+                <methods>
+                    <include name="checkLoginWithPositiveCreds"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <!-- FIREFOX  -->
+    <test name="Login Tests - Firefox">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="tests.LoginTest">
+                <methods>
+                    <include name="checkLoginWithPositiveCreds"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <!-- Все тесты на CHROME -->
+    <test name="Full Suite - Chrome">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="tests.LoginTest"/>
+            <class name="tests.ProductsPageTest"/>
+            <class name="tests.CartTest"/>
+        </classes>
+    </test>
+</suite>

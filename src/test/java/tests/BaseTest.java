@@ -1,17 +1,24 @@
 package tests;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.testng.AllureTestNg;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.testng.ITestContext;
+import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
 import pages.CartPage;
 import pages.LoginPage;
 import pages.ProductsPage;
+import utils.TestListener;
+
 import java.time.Duration;
 import java.util.HashMap;
 
+@Listeners({AllureTestNg.class, TestListener.class})
 public class BaseTest {
 
     protected WebDriver driver;
@@ -28,26 +35,41 @@ public class BaseTest {
     protected static final String ERROR_USER = "error_user";
     protected static final String VISUAL_USER = "visual_user";
 
-    @BeforeMethod
-    public void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        HashMap<String, Object> chromePrefs = new HashMap<>();
-        chromePrefs.put("credentials_enable_service", false);
-        chromePrefs.put("profile.password_manager_enabled", false);
-        options.setExperimentalOption("prefs", chromePrefs);
-        options.addArguments("--incognito");
-        options.addArguments("--disable-notifications");
-        options.addArguments("--disable-popup-blocking");
-        options.addArguments("--disable-infobars");
-        driver = new ChromeDriver(options);
+    @Parameters({"browser"})
+    @BeforeMethod (alwaysRun = true)
+    @Description("Настройка браузера")
+    public void setUp(@Optional("chrome") String browser, ITestContext iTestContext) {
+        // Инициализация драйвера в зависимости от браузера
+        if (browser.equalsIgnoreCase("firefox")) {
+            FirefoxOptions firefoxOptions = new FirefoxOptions();
+            //firefoxOptions.addArguments("--headless");  // опционально
+            driver = new FirefoxDriver(firefoxOptions);
+            driver.manage().window().maximize();
+        } else {
+            // Chrome по умолчанию
+            ChromeOptions chromeOptions = new ChromeOptions();
+            HashMap<String, Object> chromePrefs = new HashMap<>();
+            chromePrefs.put("credentials_enable_service", false);
+            chromePrefs.put("profile.password_manager_enabled", false);
+            chromeOptions.setExperimentalOption("prefs", chromePrefs);
+            chromeOptions.addArguments("--incognito");
+            chromeOptions.addArguments("--disable-notifications");
+            chromeOptions.addArguments("--disable-popup-blocking");
+            chromeOptions.addArguments("--disable-infobars");
+            driver = new ChromeDriver(chromeOptions);
+            //DriverManager.setDriver(driver);//1.03 xunit video
+        }
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
         loginPage = new LoginPage(driver);
         productsPage = new ProductsPage(driver);
         cartPage = new CartPage(driver);
+
+        iTestContext.setAttribute("driver", driver);
     }
 
     @AfterMethod (alwaysRun = true)
+    @Description("Закрытие браузера")
     public void tearDown() {
         driver.quit();
         softAssert.assertAll();

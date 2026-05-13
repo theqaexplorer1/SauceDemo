@@ -1,4 +1,5 @@
 package tests;
+import io.qameta.allure.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -9,6 +10,10 @@ import org.testng.annotations.Test;
 import java.util.HashMap;
 import java.util.List;
 
+@Epic("Technical")
+@Feature("Locator Validation")
+@Owner("ivan.ivanov")
+@Link(name = "SauceDemo", url = "https://saucedemo.com")
 public class LocatorTest {
 
     //credentials
@@ -18,7 +23,14 @@ public class LocatorTest {
     public static final String LOGIN_ERROR_USER = "error_user";
     public static final String PASSWORD = "secret_sauce";
 
-    @Test
+    @Test(description = "Проверка локаторов", testName = "Проверка локаторов")
+    @Description("Технический тест: проверка работы всех типов локаторов Selenium на SauceDemo")
+    @TmsLink("QASE-901")
+    @Issue("BUG-901")
+    @Story("Verify all locator types")
+    @Severity(SeverityLevel.MINOR)
+    @Owner("ivan.ivanov")
+    @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void checkLocator() throws InterruptedException{
         ChromeOptions options = new ChromeOptions();
         HashMap<String, Object> chromePrefs = new HashMap<>();
