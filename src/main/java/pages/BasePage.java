@@ -1,9 +1,11 @@
 package pages;
+import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+@Log4j2
 public abstract class BasePage {
 
     protected final WebDriver driver;
@@ -27,8 +29,10 @@ public abstract class BasePage {
      * @param url адрес страницы
      */
     protected void openPage(String url) {
+        log.debug("Open page: {}", url);
         driver.get(url);
         // Ждём, пока isPageLoaded() вернёт true (но не дольше 10 сек)
         wait.until(driver -> isPageLoaded());
+        log.info("Page loaded: {}", url);
     }
 }

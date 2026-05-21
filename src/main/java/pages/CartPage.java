@@ -1,8 +1,10 @@
 package pages;
 import io.qameta.allure.Step;
+import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+@Log4j2
 public class CartPage extends BasePage{
 
     private final By CART_ITEM = By.cssSelector(".cart_item");
@@ -25,12 +27,14 @@ public class CartPage extends BasePage{
         try {
             return driver.getCurrentUrl().contains("/cart.html");
         } catch (Exception e) {
+            log.warn("CartPage not loaded: {}", e.getMessage());
             return false;
         }
     }
 
     @Step("Открыть страницу корзины: {0}")
     public CartPage open() {
+        log.info("Open cart page");
         openPage(BASE_URL + "/cart.html");
         return this;  // 🔗 Chain: остаёмся на CartPage
     }
@@ -38,27 +42,34 @@ public class CartPage extends BasePage{
     // Переход в корзину по иконке (можно вызвать из ProductsPage, но оставлено для полноты)
     @Step("Переход в корзину по иконке")
     public void goToCartFromProducts() {
+        log.debug("Go to cart from products page");
         driver.findElement(By.id("shopping_cart_container")).click();
     }
 
     @Step("Получить название первого товара в корзине")
     public String getFirstItemName() {
-        return driver.findElement(ITEM_NAME).getText();
+        String name = driver.findElement(ITEM_NAME).getText();
+        log.debug("First item name in cart: '{}'", name);
+        return name;
     }
 
     @Step("Получить цену первого товара в корзине")
     public String getFirstItemPrice() {
-        return driver.findElement(ITEM_PRICE).getText();
+        String price = driver.findElement(ITEM_PRICE).getText();
+        log.debug("First item price in cart: '{}'", price);
+        return price;
     }
 
     @Step("Удалить первый товар из корзины")
     public CartPage removeFirstItem() {
+        log.info("Removing first item from cart");
         driver.findElement(REMOVE_BUTTON).click();
         return this;  // Chain: остаёмся на CartPage
     }
 
     @Step("Перейти к оформлению заказа")
     public void clickCheckout() {
+        log.info("Clicking checkout button");
         driver.findElement(CHECKOUT_BUTTON).click();
         // Возвращаем void, так как дальше идёт проверка URL в тесте
         // CheckoutPage не реализован на данный момент
@@ -66,18 +77,24 @@ public class CartPage extends BasePage{
 
     @Step("Проверить наличие товара '{0}' в корзине")
     public boolean isItemInCart(String itemName) {
-        return getFirstItemName().equals(itemName);
+        boolean inCart = getFirstItemName().equals(itemName);
+        log.debug("Item '{}' in cart: {}", itemName, inCart);
+        return inCart;
     }
 
     // Корзина пуста, если нет элементов .cart_item
     @Step("Проверить, что корзина пуста")
     public boolean isCartEmpty() {
-        return driver.findElements(CART_ITEM).isEmpty();
+        boolean empty = driver.findElements(CART_ITEM).isEmpty();
+        log.debug("Cart empty: {}", empty);
+        return empty;
     }
 
     // Удалённые элементы в корзине в DOM имеют div.removed_cart_item
     @Step("Проверить отображение сообщения о пустой корзине в HTML страницы")
     public boolean isEmptyCartItemInDom() {
-        return driver.findElements(EMPTY_CART_ITEM).size() > 0;
+        boolean hasEmptyMessage = driver.findElements(EMPTY_CART_ITEM).size() > 0;
+        log.debug("Empty cart message in DOM: {}", hasEmptyMessage);
+        return hasEmptyMessage;
     }
 }

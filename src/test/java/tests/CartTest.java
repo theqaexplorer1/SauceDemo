@@ -1,5 +1,6 @@
 package tests;
 import io.qameta.allure.*;
+import lombok.extern.log4j.Log4j2;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.CartPage;
@@ -10,6 +11,7 @@ import pages.LoginPage;
  * Демонстрирует полную цепочку:
  *    LoginPage -> login() -> ProductsPage -> addToCart() -> goToCart() -> CartPage
  */
+@Log4j2
 @Epic("E-commerce")
 @Feature("Shopping Cart")
 @Owner("ivan.ivanov")
@@ -36,6 +38,7 @@ public class CartTest extends BaseTest {
         // 3. .login(...) - логинимся -> ProductsPage
         // 4. .addToCart(0) - добавляем товар -> ProductsPage (this)
         // 5. .goToCart() - переходим в корзину -> CartPage
+        log.info("Starting test: Cart page navigation and item name check");
         CartPage cartPage = new LoginPage(driver)
                 .open()
                 .login(USERNAME, PASSWORD)
@@ -44,6 +47,7 @@ public class CartTest extends BaseTest {
         // Проверка названия товара в корзине
         Assert.assertEquals(cartPage.getFirstItemName(), EXPECTED_ITEM_NAME,
                 "Название товара в корзине не совпадает");
+        log.info("Test passed: Cart page navigation and item name check");
     }
 
     @Test(groups = {"regression", "cart"},
@@ -57,6 +61,7 @@ public class CartTest extends BaseTest {
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testCartItemPrice() {
+        log.info("Starting test: Cart item price check");
         CartPage cartPage = new LoginPage(driver)
                 .open()
                 .login(USERNAME, PASSWORD)
@@ -64,6 +69,7 @@ public class CartTest extends BaseTest {
                 .goToCart();
         Assert.assertEquals(cartPage.getFirstItemPrice(), EXPECTED_ITEM_PRICE,
                 "Цена товара в корзине не совпадает");
+        log.info("Test Passed: Cart item price check");
     }
 
     @Test(groups = {"regression", "cart"},
@@ -77,6 +83,7 @@ public class CartTest extends BaseTest {
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testRemoveItemFromCart() {
+        log.info("Starting test: Remove item from cart");
         CartPage cartPage = new LoginPage(driver)
                 .open()
                 .login(USERNAME, PASSWORD)
@@ -93,6 +100,7 @@ public class CartTest extends BaseTest {
         // Проверяем, что появился .removed_cart_item элемент в DOM
         softAssert.assertTrue(cartPage.isEmptyCartItemInDom(),
                 "Должно отображаться сообщение о пустой корзине");
+        log.info("Test passed: Remove item from cart");
     }
 
     // Проверка перехода к странице Checkout для оформления заказа
@@ -107,6 +115,7 @@ public class CartTest extends BaseTest {
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testGoToCheckout() {
+        log.info("Starting test: Go to checkout");
         new LoginPage(driver)
                 .open()
                 .login(USERNAME, PASSWORD)
@@ -115,6 +124,7 @@ public class CartTest extends BaseTest {
                 .clickCheckout();  // Возвращает void, цепочка завершена
         Assert.assertTrue(driver.getCurrentUrl().contains("/checkout-step-one.html"),
                 "Должна открыться страница оформления заказа");
+        log.info("Test Passed: Go to checkout");
     }
 
     @Test(groups = {"regression", "cart", "e2e"},
@@ -128,6 +138,7 @@ public class CartTest extends BaseTest {
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testFullCartFlow() {
+        log.info("Starting test: Full cart flow - E2E");
         CartPage cartPage = new LoginPage(driver)
                 .open()
                 .login(USERNAME, PASSWORD)

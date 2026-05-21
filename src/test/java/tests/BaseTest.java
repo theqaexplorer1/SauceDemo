@@ -2,6 +2,7 @@ package tests;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.testng.AllureTestNg;
+import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -26,6 +27,7 @@ import java.util.HashMap;
  * Убраны глобальные поля страниц (loginPage, productsPage и т.д.)
  * Теперь страницы создаются локально в тестах через цепочку вызовов.
  */
+@Log4j2
 @Listeners({AllureTestNg.class, TestListener.class})
 public class BaseTest {
 
@@ -51,6 +53,7 @@ public class BaseTest {
     @BeforeMethod (alwaysRun = true)
     @Description("Настройка браузера")
     public void setUp(@Optional("chrome") String browser, ITestContext iTestContext) {
+        log.info("Setting up test with browser: {}", browser);
         // Инициализация драйвера в зависимости от браузера
         if (browser.equalsIgnoreCase("firefox")) {
             FirefoxOptions firefoxOptions = new FirefoxOptions();
@@ -75,6 +78,7 @@ public class BaseTest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         // Сохраняем драйвер для скриншотов в TestListener
         iTestContext.setAttribute("driver", driver);
+        log.debug("Driver initialized");
     }
 
     /**
@@ -84,10 +88,12 @@ public class BaseTest {
     @AfterMethod (alwaysRun = true)
     @Description("Закрытие браузера")
     public void tearDown() {
+        log.info("Tearing down test");
         if (driver != null) {
             driver.quit();
         }
         softAssert.assertAll();
+        log.debug("Test tearDown done");
     }
 
     /**
@@ -98,6 +104,7 @@ public class BaseTest {
      * @return ProductsPage — страница товаров после успешного логина
      */
     protected pages.ProductsPage loginAsStandardUser() {
+        log.debug("Logging in as standard user");
         return new pages.LoginPage(driver)  // 1. Создаём LoginPage
                 .open()                      // 2. Открываем и ждём загрузки → возвращает LoginPage (this)
                 .login(USERNAME, PASSWORD);  // 3. Логинимся → возвращает ProductsPage (новая страница)
@@ -111,6 +118,7 @@ public class BaseTest {
      *   if (result instanceof ProductsPage) { ... }
      */
     protected BasePage loginWithCredentials(String username, String password) {
+        log.debug("Logging in with credentials: {}", username);
         pages.LoginPage loginPage = new pages.LoginPage(driver).open();
         return loginPage.login(username, password);  // Вернёт ProductsPage или LoginPage
     }
