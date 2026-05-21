@@ -1,8 +1,16 @@
 package tests;
 import io.qameta.allure.*;
+import lombok.extern.log4j.Log4j2;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import pages.LoginPage;
+import pages.ProductsPage;
 
+/**
+ * Тесты для страницы товаров (инвентаря).
+ * Все тесты используют цепочку: LoginPage -> login() -> ProductsPage
+ */
+@Log4j2
 @Epic("E-commerce")
 @Feature("Product Catalog")
 @Owner("ivan.ivanov")
@@ -20,8 +28,13 @@ public class ProductsPageTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testProductsPageTitle() {
-        loginAsStandardUser();
+        // Получаем ProductsPage через цепочку вызовов
+        log.info("Starting test: Products page title check");
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
         Assert.assertEquals(productsPage.getTitle(), "Products", "Должен быть заголовок Products");
+        log.info("Test passed: Products page title check");
     }
 
     @Test(groups = {"regression", "products"},
@@ -35,8 +48,12 @@ public class ProductsPageTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testProductsListDisplayed() {
-        loginAsStandardUser();
+        log.info("Starting test: Products list count check");
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
         Assert.assertEquals(productsPage.getItemsCount(), 6, "На странице должно быть 6 товаров");
+        log.info("Test passed: Products list count check");
     }
 
     @Test(groups = {"regression", "products", "cart"},
@@ -50,10 +67,16 @@ public class ProductsPageTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testAddToCart() {
-        loginAsStandardUser();
-        softAssert.assertTrue(productsPage.isAddButtonVisible(0), "Должна быть кнопка 'Add to cart'");
-        productsPage.addToCart(0);
-        softAssert.assertTrue(productsPage.isRemoveButtonVisible(0), "После добавления должна быть кнопка 'Remove'");
+        log.info("Starting test: Add item to cart");
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
+        softAssert.assertTrue(productsPage.isAddButtonVisible(0),
+                "Должна быть кнопка 'Add to cart'");
+        productsPage.addToCart(0); // addToCart() возвращает this (ProductsPage) -> можно продолжать цепочку
+        softAssert.assertTrue(productsPage.isRemoveButtonVisible(0),
+                "После добавления должна быть кнопка 'Remove'");
+        log.info("Test passed: Add item to cart");
     }
 
     @Test(groups = {"regression", "products", "cart"},
@@ -67,11 +90,16 @@ public class ProductsPageTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testRemoveFromCart() {
-        loginAsStandardUser();
-        productsPage.addToCart(0);
+        log.info("Starting test: Remove item from cart");
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
+        productsPage.addToCart(0); //сначала добавляем товар
         softAssert.assertTrue(productsPage.isRemoveButtonVisible(0));
-        productsPage.removeFromCart(0);
-        softAssert.assertTrue(productsPage.isAddButtonVisible(0), "После удаления должна вернуться кнопка 'Add to cart'");
+        productsPage.removeFromCart(0); // Удаляем товар (метод возвращает this)
+        softAssert.assertTrue(productsPage.isAddButtonVisible(0),
+                "После удаления должна вернуться кнопка 'Add to cart'");
+        log.info("Test passed: Remove item from cart");
     }
 
     @Test(groups = {"regression", "products", "cart"},
@@ -85,10 +113,16 @@ public class ProductsPageTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void testCartBadgeCount() {
-        loginAsStandardUser();
+        log.info("Starting test: Cart badge counter update");
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
         productsPage.addToCart(0);
-        softAssert.assertEquals(productsPage.getCartBadgeCount(), "1", "Счётчик корзины должен быть 1");
+        softAssert.assertEquals(productsPage.getCartBadgeCount(), "1",
+                "Счётчик корзины должен быть 1");
         productsPage.addToCart(1);
-        softAssert.assertEquals(productsPage.getCartBadgeCount(), "2", "Счётчик корзины должен быть 2");
+        softAssert.assertEquals(productsPage.getCartBadgeCount(), "2",
+                "Счётчик корзины должен быть 2");
+        log.info("Test passed: Cart badge counter update");
     }
 }

@@ -1,10 +1,21 @@
 package tests;
 import io.qameta.allure.*;
+import lombok.extern.log4j.Log4j2;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import pages.LoginPage;
+import pages.ProductsPage;
+
 import static org.testng.AssertJUnit.assertEquals;
 
+/**
+ * Тесты для страницы логина.
+ * Все тесты используют паттерн Chain of Invocations:
+ * new LoginPage(driver).open().login(...)
+ * Каждая страница проверяет свою загрузку через isPageLoaded()
+ */
+@Log4j2
 public class LoginTest extends BaseTest{
 
     @Test(groups = {"smoke", "regression", "login"},
@@ -20,9 +31,16 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void checkLoginWithPositiveCreds() {
-        loginPage.open();
-        loginPage.login(USERNAME, PASSWORD);
+        // Chain of Invocations:
+        // 1. new LoginPage(driver) - создаём объект страницы
+        // 2. .open() - открываем URL и ждём isPageLoaded() -> возвращает LoginPage (this)
+        // 3. .login(...) - вводим креды, кликаем Login -> возвращает ProductsPage
+        log.info("Starting test: Login with positive credentials");
+        ProductsPage productsPage = new LoginPage(driver)
+                .open()
+                .login(USERNAME, PASSWORD);
         assertEquals(productsPage.getTitle(), "Products");
+        log.info("Test passed: Login with positive credentials");
     }
 
     @Test(groups = {"regression", "login", "negative"},
@@ -38,9 +56,11 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void checkLoginWithEmptyUser() {
-        loginPage.open();
-        loginPage.login("", PASSWORD);
+        log.info("Starting test: Login with empty username");
+        LoginPage loginPage = new LoginPage(driver).open();
+        loginPage.login("", PASSWORD);  // Пустой логин
         assertEquals(loginPage.getErrorMessage(), "Epic sadface: Username is required");
+        log.info("Test passed: Login with empty username");
     }
 
     @Test(groups = {"regression", "login", "negative"},
@@ -56,9 +76,11 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void checkLoginWithEmptyPassword() {
-        loginPage.open();
-        loginPage.login(USERNAME, "");
+        log.info("Starting test: Login with empty password");
+        LoginPage loginPage = new LoginPage(driver).open();
+        loginPage.login(USERNAME, "");  // Пустой пароль
         assertEquals(loginPage.getErrorMessage(), "Epic sadface: Password is required");
+        log.info("Test passed: Login with empty password");
     }
 
     @Test(groups = {"regression", "login", "negative"},
@@ -74,10 +96,12 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void checkLoginWithNegativeUser() {
-        loginPage.open();
-        loginPage.login("ABC", PASSWORD);
+        log.info("Starting test: Login with invalid username");
+        LoginPage loginPage = new LoginPage(driver).open();
+        loginPage.login("ABC", PASSWORD);  // Неверный логин
         assertEquals(loginPage.getErrorMessage(), "Epic sadface: Username and password do not match " +
                 "any user in this service");
+        log.info("Test passed: Login with invalid username");
     }
 
     @Test(groups = {"regression", "login", "negative"},
@@ -93,12 +117,18 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void checkLoginWithNegativePassword() {
-        loginPage.open();
-        loginPage.login(USERNAME, "ABC");
+        log.info("Starting test: Login with invalid password");
+        LoginPage loginPage = new LoginPage(driver).open();
+        loginPage.login(USERNAME, "ABC");  // Неверный пароль
         assertEquals(loginPage.getErrorMessage(), "Epic sadface: Username and password do not match " +
                 "any user in this service");
+        log.info("Test Passed: Login with invalid password");
     }
 
+    /**
+     * DataProvider: набор данных для параметризованных тестов
+     * Возвращает массив: [логин, пароль, ожидаемое сообщение об ошибке]
+     */
     @DataProvider(name = "Тестовые данные для негативного логина")
     public Object[][] loginData() {
         return new Object[][] {
@@ -120,8 +150,10 @@ public class LoginTest extends BaseTest{
     @Owner("ivan.ivanov")
     @Link(name = "SauceDemo", url = "https://saucedemo.com")
     public void negativeLogin(String user, String password, String errorMessage) {
-        loginPage.open();
+        log.info("Starting parameterized test: negativeLogin with user='{}'", user);
+        LoginPage loginPage = new LoginPage(driver).open();
         loginPage.login(user, password);
         assertEquals(loginPage.getErrorMessage(), errorMessage);
+        log.info("Parameterized test: negativeLogin with user='{}' passed", user);
     }
 }

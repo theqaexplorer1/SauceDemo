@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <!-- ========== APPENDERS (куда писать логи) ========== -->
+    <Appenders>
+
+        <!-- 1. Консоль: вывод в терминал/лог IDE -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <!-- test.log: только события уровня INFO и выше -->
+        <File name="TestLog" fileName="target/test.log" append="false">
+            <Filters>
+                <!-- Принимаем только INFO и выше, отклоняем DEBUG -->
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+
+        <!-- debug.log: только DEBUG-сообщения -->
+        <File name="DebugLog" fileName="target/debug.log" append="false">
+            <Filters>
+                <!-- Принимаем только DEBUG, отклоняем всё остальное -->
+                <LevelRangeFilter level="DEBUG" maxLevel="DEBUG"
+                                  onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+
+    </Appenders>
+
+    <!-- ========== LOGGERS (что и куда логировать) ========== -->
+    <Loggers>
+
+        <!-- Корневой логгер: уровень INFO, пишет в консоль и test.log -->
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="TestLog"/>
+        </Root>
+
+        <!-- Логгер для твоих пакетов: уровень DEBUG, пишет ещё и в debug.log -->
+        <!-- Это позволит видеть детальные логи только для твоего кода -->
+        <Logger name="pages" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="TestLog"/>
+            <AppenderRef ref="DebugLog"/>
+        </Logger>
+
+        <Logger name="wrappers" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="TestLog"/>
+            <AppenderRef ref="DebugLog"/>
+        </Logger>
+
+        <Logger name="tests" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="TestLog"/>
+            <AppenderRef ref="DebugLog"/>
+        </Logger>
+
+        <!-- Логгер для сторонних библиотек: только ошибки, чтобы не засорять вывод -->
+        <Logger name="org.openqa.selenium" level="WARN"/>
+        <Logger name="org.apache.http" level="WARN"/>
+
+    </Loggers>
+
+</Configuration>
